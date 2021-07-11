@@ -1,9 +1,9 @@
-const {odd, even} = require('var');
+import {odd, even} from 'var';
 
 console.log(odd);
 console.log(even);
 
-function checkOddOrEven(number){
+function checkOddOrEven(number) {
     if (number % 2) {
         return odd;
     } else {
