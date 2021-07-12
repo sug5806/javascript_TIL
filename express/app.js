@@ -5,9 +5,8 @@ const app = express();
 
 app.set('port', 8080);
 
-app.use((req, res, next) => {
-    console.log('모든 요청에 실행하고 싶어요');
-    next();
+app.get('/category/:name', (req, res) => {
+    res.send(`hello ${req.params.name}`);
 });
 
 
@@ -18,6 +17,11 @@ app.get('/', (req, res) => {
 
 app.get('/user', (req, res) => {
     res.send('user user')
+})
+
+app.use((err, req, res, next) => {
+    console.log(err);
+    next();
 })
 
 app.listen(app.get('port'), () => {
