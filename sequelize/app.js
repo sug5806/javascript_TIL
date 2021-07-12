@@ -1,12 +1,31 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const nunjucks = require('nunjucks');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const {sequelize} = require('./models');
 
-var app = express();
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const commentsRouter = require('./routes/comment');
+
+const app = express();
+
+app.set('port', process.env.PORT || 8080);
+app.set('view engine', 'html');
+nunjucks.configure('views', {
+    express: app,
+    watch: true,
+})
+
+sequelize.sync({force: false})
+    .then(() => {
+        console.log('db 연결 성공');
+    })
+    .catch((err) => {
+        console.error(err);
+    })
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -16,5 +35,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/comments', commentsRouter);
+
+app.use((req, res, next) => {
+    const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
+    error.status = 404;
+    next(error);
+});
+
+app.use((err, req, res, next)=> {
+    res.locals.message = err.message;
+    res.locals.error = process.env.NODE_ENV !== 'production' ? err : {};
+    res.status(err.status || 500);
+    res.render('error');
+})
 
 module.exports = app;
