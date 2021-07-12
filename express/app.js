@@ -25,6 +25,10 @@ router.get('/user', (req, res) => {
     res.send('user user')
 });
 
+router.get('/json', (req, res) => {
+    res.json( {hello: 'express'})
+})
+
 app.use(router);
 
 app.listen(app.get('port'), () => {
