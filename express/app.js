@@ -7,6 +7,11 @@ const router = express.Router();
 
 app.set('port', 8080);
 
+router.use((req, res, next) => {
+    console.log('Time: ', Date.now());
+    next();
+})
+
 router.get('/category/:name', (req, res) => {
     res.send(`hello ${req.params.name}`);
 });
@@ -20,13 +25,7 @@ router.get('/user', (req, res) => {
     res.send('user user')
 });
 
-router.use((req, res, next) => {
-    res.status(404).send('page not found');
-})
-
-router.use((req, res, next) => {
-    console.log("asdf");
-})
+app.use(router);
 
 app.listen(app.get('port'), () => {
     console.log('익스프레스 서버 실행');
